@@ -1,0 +1,14 @@
+{
+ "name": "Space Hamster Run",
+ "short_name": "Space Hamster",
+ "start_url": "/",
+ "scope": "/",
+ "display": "fullscreen",
+ "orientation": "portrait",
+ "background_color": "#07031a",
+ "theme_color": "#22104f",
+ "icons": [
+  {"src": "/favicon.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+  {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+ ]
+}
