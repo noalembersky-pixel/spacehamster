@@ -14,6 +14,7 @@ What it adds on top of Guy's game (gameplay untouched):
   - title screen: sound on/off button, FEEDBACK / SHARE / CREDITS links, touch-only hint on phones
   - CREDITS card with Privacy and Help links (Apple needs Privacy reachable in-app)
   - SHARE on the win and game-over cards, SOUND button on the pause card
+  - share links: web shares the playable game, store apps share SITE/get/ (SHARE_URL_WEB / SHARE_URL_APP)
   - "needs 3D graphics" message instead of a black screen when WebGL is missing
   - fix: taps on RUN! or a world during the 1.6 s warp animation are ignored
     (before: RUN! mid-warp started the run with the wrong world loaded)
@@ -41,6 +42,10 @@ SITE = 'https://spacehamster.oatmealmorning.com'
 # Google Form for feedback. Empty = the FEEDBACK link opens an email to support@ instead.
 FEEDBACK = ''
 FEEDBACK_HREF = FEEDBACK or 'mailto:support@oatmealmorning.com?subject=Space%20Hamster%20Run%20feedback'
+# Share links (one setting, two values): the web game shares its own playable address;
+# the store apps share the /get/ page, which shows the store badges (or "Coming soon").
+SHARE_URL_WEB = SITE + '/'
+SHARE_URL_APP = SITE + '/get/'
 PH_KEY = 'phc_qo4wiAUHZxUNwLi2nGGmHVEUX4cZxUcMNEMy5vxG6jBW'   # shared "Oatmeal Morning apps" project
 VERSION = '1.0'
 
@@ -78,9 +83,11 @@ sub('<title>Space Hamster Run</title>', f'''<title>Space Hamster Run — a hamst
 /* ---- analytics (PostHog, cookieless, no autocapture, no recordings) ---- */
 const PH_KEY = '{PH_KEY}';
 window.track = function(){{}};
+const SHR_BUILD = {{ platform: 'web', version: '' }};   // app builds rewrite this one line
+// SHARE LINKS (one setting): the web game shares its own playable address; the store apps share the /get/ page (store badges, or "Coming soon")
+const SHARE_URL = {{ web: '{SHARE_URL_WEB}', app: '{SHARE_URL_APP}' }};
 if (PH_KEY) {{
   !function(t,e){{var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){{function g(t,e){{var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){{t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){{var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}},u.people.toString=function(){{return u.toString(1)+".people (stub)"}},o="init capture register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties alias".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])}},e.__SV=1)}}(document,window.posthog||[]);
-  const SHR_BUILD = {{ platform: 'web', version: '' }};   // app builds rewrite this one line
   let shrPid = null;   // app builds only: a random ID kept on the phone so a returning player counts once. The web game keeps no ID.
   if (SHR_BUILD.platform !== 'web') {{ try {{ shrPid = localStorage.getItem('shr-pid'); if (!shrPid) {{ shrPid = 'shr-' + Array.from(crypto.getRandomValues(new Uint8Array(16)), x => ('0' + x.toString(16)).slice(-2)).join(''); localStorage.setItem('shr-pid', shrPid); }} }} catch (e) {{ shrPid = null; }} }}
   posthog.init(PH_KEY, Object.assign({{ api_host: 'https://us.i.posthog.com', persistence: 'memory', capture_pageview: true, capture_pageleave: false, autocapture: false, disable_session_recording: true, disable_surveys: true }}, shrPid ? {{ bootstrap: {{ distinctID: shrPid }} }} : {{}}));
@@ -189,9 +196,9 @@ function closeCredits(){$('credits').classList.add('hidden');$('start').classLis
 $('creditsBtn').onclick=openCredits;$('creditsBack').onclick=closeCredits;
 $('fbLink').addEventListener('click',()=>track('feedback_click',{}));
 async function share(where){
- const url='https://spacehamster.oatmealmorning.com/',pts=(score||0).toLocaleString('en-US'),w=L.name.charAt(0)+L.name.slice(1).toLowerCase();
+ const app=SHR_BUILD.platform!=='web',url=app?SHARE_URL.app:SHARE_URL.web,pts=(score||0).toLocaleString('en-US'),w=L.name.charAt(0)+L.name.slice(1).toLowerCase();
  const text=where==='win'?(levelIdx===LEVELS.length-1?`I beat all 5 worlds of Space Hamster Run with ${pts} points! Can you?`:`I made it through the ${w} world in Space Hamster Run with ${pts} points. Beat me:`)
-  :where==='over'?`I got ${pts} points in the ${w} world of Space Hamster Run. Beat me:`:'Space Hamster Run: run, jump and grab the nuts through 5 worlds. Free in your browser:';
+  :where==='over'?`I got ${pts} points in the ${w} world of Space Hamster Run. Beat me:`:'Space Hamster Run: run, jump and grab the nuts through 5 worlds. '+(app?'Free on your phone:':'Free in your browser:');
  const btn=$(where==='win'?'shareWin':where==='over'?'shareOver':'shareTitle');
  track('share_click',{where,level:levelIdx+1,world:L.id,score:where==='title'?0:score});
  try{if(navigator.share){await navigator.share({title:'Space Hamster Run',text,url});return;}
