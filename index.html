@@ -22,6 +22,17 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Space Hamster">
 <script>
+/* ---- home lock: this file only runs on our own site and inside our apps.
+   A copy uploaded anywhere else, or shown inside another site's frame, sends the player to our site. ---- */
+(function(){var H='https://spacehamster.oatmealmorning.com/',h=location.hostname,
+ ok=location.protocol==='file:'||h===''||h==='localhost'||h==='127.0.0.1'||h==='appassets.androidplatform.net'||/(^|\.)oatmealmorning\.com$/.test(h);
+ var framed=false;try{framed=window.top!==window.self;}catch(e){framed=true;}
+ if(ok&&!framed)return;
+ try{if(framed)window.top.location.href=H;else location.replace(H);}catch(e){}
+ document.write('<p style="font:18px sans-serif;text-align:center;margin-top:40vh">Play Space Hamster Run at <a href="'+H+'" target="_top">spacehamster.oatmealmorning.com</a></p><plaintext style="display:none">');
+})();
+</script>
+<script>
 /* ---- analytics (PostHog, cookieless, no autocapture, no recordings) ---- */
 const PH_KEY = 'phc_qo4wiAUHZxUNwLi2nGGmHVEUX4cZxUcMNEMy5vxG6jBW';
 window.track = function(){};
