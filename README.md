@@ -17,8 +17,13 @@ The website has **no playable game** (decided 24 Nov 2026). It is a store page o
 
     python3 tools/merge_guy_build.py GUY_FILE.html /tmp/spacehamster-build
 
-Then change the one `SHR_BUILD` line to `{ platform: 'android', version: 'X.Y' }` and copy the file to
-`Desktop/Oatmeal Morning/Space Hamster Run/spacehamster-app/app-web/index.html`.
+Then make the app version of it:
+
+    python3 tools/make_app_build.py /tmp/spacehamster-build/index.html /tmp/shr-android --platform android --version X.Y
+    python3 tools/make_app_build.py /tmp/spacehamster-build/index.html /tmp/shr-ios --platform ios --version X.Y
+
+Android: copy to `Desktop/Oatmeal Morning/Space Hamster Run/spacehamster-app/app-web/index.html`.
+iPhone: copy to `Desktop/Oatmeal Morning/Space Hamster Run/spacehamster-ios/www/index.html`, then `npm install` and `npx cap sync ios` there.
 Feedback form link, share links and PostHog key are at the top of the script.
 
 Made by Oatmeal Morning. © 2026 Oatmeal Morning.
