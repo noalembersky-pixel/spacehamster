@@ -40,7 +40,7 @@ def sub(old, new, count=1):
 
 SITE = 'https://spacehamster.oatmealmorning.com'
 # Google Form for feedback. Empty = the FEEDBACK link opens an email to support@ instead.
-FEEDBACK = ''
+FEEDBACK = 'https://docs.google.com/forms/d/e/1FAIpQLSfwSJGkgqiwvlFS5Z2xbsUmie_F1GcMeohQo6bGIoaUMOExBw/viewform'
 FEEDBACK_HREF = FEEDBACK or 'mailto:support@oatmealmorning.com?subject=Space%20Hamster%20Run%20feedback'
 # Share links (one setting, two values): the web game shares its own playable address;
 # the store apps share the /get/ page, which shows the store badges (or "Coming soon").
